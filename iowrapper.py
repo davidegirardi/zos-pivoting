@@ -1,4 +1,4 @@
-nimport argparse
+import argparse
 import sys
 import subprocess
 import threading
@@ -46,6 +46,12 @@ class IOWrapper():
             # Print the local newline, Python takes care of \r, \n, \r\n
             sys.stdout.write('\n')
             sys.stdout.flush()
+        # If the program is not running, maybe we have something on a run once
+        # program like cat
+        returndata = b''
+        returndata = self.p.stdout.buffer.read()
+        sys.stdout.write(self.to_local(returndata))
+        sys.stdout.flush
 
     def synchronous_thread_out(self, termination_string):
         input_buffer = b''
