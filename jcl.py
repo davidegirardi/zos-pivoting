@@ -101,5 +101,5 @@ if __name__ == '__main__':
     JCL.add_step(S1)
     JCL.add_step(S2)
     JCL.add_inline('LISTDSD', 'TSO')
-    JCL.add_inline('SH pwd >> ~/output.txt', 'OMVS')
+    JCL.add_inline('SH pwd >> ~/output.txt')
     print(JCL)
