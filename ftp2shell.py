@@ -5,10 +5,11 @@ import argparse
 from string import Template
 from configparser import ConfigParser, ExtendedInterpolation
 import getpass
-from zosftp import ZOSFTP
-import ssh_utils
+# This project imports
+from sshutils import ssh_utils
+from zosutils import ZOSFTP
+from zosutils import Job
 from wrappingshell import WrappingShell
-from jcl import Job
 
 MKFIFO = 'SH mkfifo $FIFONAME'
 REVERSE_SH_SSH_TO_FILE = '''SH echo '

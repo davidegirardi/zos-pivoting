@@ -1,7 +1,7 @@
 import argparse
 import sys
 from cmd import Cmd
-from iowrapper import IOWrapper
+from zosutils import IOWrapper
 
 
 class WrappingShell(Cmd):
@@ -100,10 +100,10 @@ if __name__ == '__main__':
     wrapping_encoding = local_arguments.encoding
 
     if local_arguments.name is None:
-        shell = WrappingShell(wrapped_command, wrapping_encoding, 
+        shell = WrappingShell(wrapped_command, wrapping_encoding,
                               sync_stdout=local_arguments.asyncio)
     else:
-        shell = WrappingShell(wrapped_command, wrapping_encoding, 
+        shell = WrappingShell(wrapped_command, wrapping_encoding,
                               name=local_arguments.name,
                               sync_stdout=local_arguments.asyncio)
     shell.cmdloop()
