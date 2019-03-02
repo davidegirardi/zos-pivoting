@@ -4,11 +4,11 @@ Also provide some zos and ssh pivoting specific commands"""
 import argparse
 import sys
 from cmd import Cmd
-from zosutils import IOWrapper
+from zosutils import StdIOtranscoder
 
 
 class WrappingShell(Cmd):
-    """Use IOWrapper to get a trans-coded shell interface.
+    """Use StdIOtranscoder to get a trans-coded shell interface.
 
     This class can optionally manage synchronous shell command by adding a so-called
     command separator which helps the receiver to sync and detect when a remote
@@ -23,7 +23,7 @@ class WrappingShell(Cmd):
         Cmd.__init__(self)
         self.name = name
         self.prompt = self.name + self.DEFAULT_PROMPT
-        self.wrapper = IOWrapper(cmdline, codepage, stdio=False)
+        self.wrapper = StdIOtranscoder(cmdline, codepage, stdio=False)
         self.stop = False
         if sync_stdout:
             self.termination_command = self.COMMAND_TERMINATOR

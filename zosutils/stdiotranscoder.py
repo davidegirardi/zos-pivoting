@@ -1,3 +1,6 @@
+"""Wrap a command stdin and stdout in a transcoder
+
+By default transcode from the local encoding (utf8) to EBCDIC-US (cp037)"""
 import argparse
 import sys
 import subprocess
@@ -10,17 +13,18 @@ except ImportError:
     pass
 
 
-class IOWrapper():
-    # Convert to EBCDIC from the current codec
+class StdIOtranscoder():
+    """Subprocess stdin/stdout wrapping"""
     def to_ebcdic(self, asciibytes):
+        """Convert a bytestring to the class codepage"""
         return asciibytes.decode().encode(self.codepage)
 
-    # Convert from EBCDIC
     def to_local(self, ebcdicbytes):
+        """ Convert from the class codepage to the local"""
         return ebcdicbytes.decode(self.codepage)
 
-    # Manage the stdin conversion for the subprocess
     def thread_in(self):
+        """Manage the stdin conversion for the subprocess, asynchronous"""
         while self.p.poll() is None:
             data = sys.stdin.buffer.readline()
             # Remove the newline character(s)
@@ -33,8 +37,8 @@ class IOWrapper():
                 break
             self.p.stdin.buffer.flush()
 
-    # Manage the stdout from the subprocess
     def thread_out(self):
+        """Manage the stdout from the subprocess, asynchronous"""
         while self.p.poll() is None:
             # Scan the input until the EBCDIC newline \x15 is found
             returndata = b''
@@ -54,6 +58,9 @@ class IOWrapper():
         sys.stdout.flush
 
     def synchronous_thread_out(self, termination_string):
+        """Thread stdout collection and tanscoding, synchronous
+
+        Use termination_string to identfy when the stdout flow is complete"""
         input_buffer = b''
         output_block = ''
         current_line = ''
@@ -75,21 +82,26 @@ class IOWrapper():
         return output_block
 
     def writein(self, bytedata):
+        """Write to the subprocess stdin"""
         self.stdin.buffer.write(bytedata)
         self.stdin.buffer.write(b'\x15')
         self.stdin.buffer.flush()
 
     def start_readout(self):
+        """Start a threaded asynchronous read of the subprocess stdout"""
         t_out = threading.Thread(target=self.thread_out)
         t_out.start()
 
     def terminate(self):
+        """Terminate the subprocess"""
         self.p.terminate()
 
     def poll(self):
+        """Check if the subprocess is running"""
         return self.p.poll()
 
     def __init__(self, command, transcoding_codepage='cp037', stdio=True):
+        """Constructor"""
         self.codepage = transcoding_codepage
         # Start the process to wrap
         self.p = subprocess.Popen(args=command,
@@ -121,4 +133,4 @@ if __name__ == '__main__':
     local_arguments, wrapped_command = parser.parse_known_args()
     wrapping_encoding = local_arguments.encoding
 
-    cmd = IOWrapper(wrapped_command, wrapping_encoding)
+    cmd = StdIOtranscoder(wrapped_command, wrapping_encoding)

@@ -7,7 +7,7 @@ The library contains:
  * `config.ini` a sample configuration file
  * `ftp2shell.py` the main script, it uses the config file and the next items
  * `wrappingshell.py` uses the IO wrapping in zosutils to get a nice interactive shell via netcat or other
- * `zosutils/iowrapper.py` wraps the stdin/stdout of a command and performs transparent re-encoding (EBCDIC to UTF8 or other encodings supported by python)
+ * `zosutils/stdiotranscoder.py` wraps the stdin/stdout of a command and performs transparent re-encoding (EBCDIC to UTF8 or other encodings supported by python)
  * `sshutils/ssh_utils.py` generation and management of ssh keys and fingerprinting
  * `zosutils/zosftp.py` talks FTP and uses the extra features of the zOS FTP
 

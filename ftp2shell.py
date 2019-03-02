@@ -7,7 +7,7 @@ from configparser import ConfigParser, ExtendedInterpolation
 import getpass
 # This project imports
 from sshutils import ssh_utils
-from zosutils import ZOSFTP
+from zosutils import FTP
 from zosutils import Job
 from wrappingshell import WrappingShell
 
@@ -106,7 +106,7 @@ if __name__ == '__main__':
 
 
     # Open FTP connection
-    ftp = ZOSFTP(config['hostname'], config['username'], config['password'])
+    ftp = FTP(config['hostname'], config['username'], config['password'])
     ftp.connect()
 
     # Set the temporary filenames for the key, FIFO and known hosts

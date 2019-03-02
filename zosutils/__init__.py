@@ -1,3 +1,3 @@
-from .zosftp import ZOSFTP
+from .ftp import FTP
 from .jcl import Job
-from .iowrapper import IOWrapper
+from .stdiotranscoder import StdIOtranscoder

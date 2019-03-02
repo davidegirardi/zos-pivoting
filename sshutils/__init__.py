@@ -1,2 +1,2 @@
-from sshutils import ssh_utils
+from . import ssh_utils
 

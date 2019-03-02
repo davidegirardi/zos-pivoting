@@ -4,7 +4,7 @@ import string
 import random
 
 
-class ZOSFTP():
+class FTP():
     DEFAULT_TEMPORARY_PATH = '/tmp'
 
     def __init__(self, hostname, username, password, port=21, passive=True):
