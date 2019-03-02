@@ -18,6 +18,8 @@ This can be applied to other systems running ssh.
 
 Do the cleanup by yourself, this is a design choice.
 
+Python 3 only.
+
 ## Requirements
 You have to create a user in your machine to get the reverse connection on your `cc_server` (see the config file).
 
@@ -25,6 +27,12 @@ It's up to you to manage what that user can do. The user does not need an intera
 
 ## Dependencies
 As an optional dependendency for exotic encondings/codepages you can install the `ebcdic` package for python.
+
+## Testing
+You can run the stdio wrapper and the reverse shell manager from the commandline bu using the `-m` option in Python. For example:
+```
+python -m zosutils.reverseshellmanager cmd nc -l -p 1234
+```
 
 ## Future Steps
 * Automate the pivoting by parsin the output of netstat/NETSTAT and:
