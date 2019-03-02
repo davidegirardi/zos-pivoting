@@ -13,12 +13,12 @@ class WrappingShell(Cmd):
     def __init__(self, cmdline, codepage, name='shell', sync_stdout=False):
         Cmd.__init__(self)
         self.name = name
-        self.prompt = self.name + WrappingShell.DEFAULT_PROMPT
+        self.prompt = self.name + self.DEFAULT_PROMPT
         self.wrapper = IOWrapper(cmdline, codepage, stdio=False)
         self.stop = False
         if sync_stdout:
-            self.termination_command = WrappingShell.COMMAND_TERMINATOR
-            self.termination_string = WrappingShell.TERMINATOR_STRING
+            self.termination_command = self.COMMAND_TERMINATOR
+            self.termination_string = self.TERMINATOR_STRING
             self.synchronous_commands = True
         else:
             self.termination_command = ''
