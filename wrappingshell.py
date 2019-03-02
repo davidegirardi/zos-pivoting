@@ -6,7 +6,7 @@ from zosutils import IOWrapper
 
 class WrappingShell(Cmd):
     TERMINATOR_STRING = 'previous_command_ended_Gcv9we7WYtGqRR7gEPRaw9ZquqZUZurj'
-    COMMAND_TERMINATOR = ';echo ' + TERMINATOR_STRING + '\n'
+    COMMAND_TERMINATOR = 'echo ' + TERMINATOR_STRING + '\n'
 
     DEFAULT_PROMPT = '> '
 
@@ -38,9 +38,13 @@ class WrappingShell(Cmd):
         if self.synchronous_commands:
             sys.stdout.write(self.wrapper.synchronous_thread_out(self.termination_string))
 
+    def prepare_command(self, args):
+        print(args[-1])
+        return args + ';' + self.termination_command
+
     def default(self, args):
         self.poll_subprocess()
-        command = args + self.termination_command
+        command = self.prepare_command(args)
         self.encode_and_send(command)
 
     def do_tsocmd(self, args):
