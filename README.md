@@ -35,7 +35,7 @@ As an optional dependency for exotic encodings/codepages you can install the `eb
     - generate and upload a JCL
     - start a connection against `cc_server` and start a tunneled clear-text shell
     - start the shell management
- * the resulting shell is a nearly full-features SH shell
+ * the resulting shell is a nearly full-featured SH shell
  * there is a custom `_runssh` command which can be used to run further ssh commands. The best use is pivoting.
 
 For example, to get access to TN3270 on your localhost run:
@@ -44,7 +44,9 @@ mainframe> _runssh -R 2222:localhost:23
 ```
 
 ## Testing
-You can run the stdio wrapper and the reverse shell manager from the commandline bu using the `-m` option in Python. For example:
+You can run the stdio wrapper and the reverse shell manager from the commandline bu using the `-m` option in Python.
+
+For example:
 ```
 python -m zosutils.reverseshellmanager cmd nc -l -p 1234
 ```
