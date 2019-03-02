@@ -39,8 +39,12 @@ class WrappingShell(Cmd):
             sys.stdout.write(self.wrapper.synchronous_thread_out(self.termination_string))
 
     def prepare_command(self, args):
-        print(args[-1])
-        return args + ';' + self.termination_command
+        # Detect if we got a command to run in background
+        if args.split(' ')[-1] == '&' or args[-1] == '&':
+            sync_character = ''
+        else:
+            sync_character = ';'
+        return args + sync_character + self.termination_command
 
     def default(self, args):
         self.poll_subprocess()
