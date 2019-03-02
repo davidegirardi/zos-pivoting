@@ -40,7 +40,7 @@ class WrappingShell(Cmd):
 
     def prepare_command(self, args):
         # Detect if we got a command to run in background
-        if args.split(' ')[-1] == '&' or args[-1] == '&':
+        if args.split()[-1] == '&' or args.endswith('&'):
             sync_character = ''
         else:
             sync_character = ';'
