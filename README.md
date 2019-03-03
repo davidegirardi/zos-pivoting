@@ -6,54 +6,65 @@ The library contains:
 
  * `config.ini` a sample configuration file
  * `ftp2shell.py` the main script, it uses the config file and the next items
- * `wrappingshell.py` uses the IO wrapping in zosutils to get a nice interactive shell via netcat or other
- * `zosutils/stdiotranscoder.py` wraps the stdin/stdout of a command and performs transparent re-encoding (EBCDIC to UTF8 or other encodings supported by python)
+ * `reverseshellmanager.py` uses `stdiotranscoder.py` in zosutils to get a nice interactive shell via netcat or other
+ * `zosutils/stdiotranscoder.py` wraps the stdin/stdout of a command and performs transparent re-encoding (EBCDIC to UTF8 or other encodings supported by python). In other words: makes nc/ncat support EBCDIC and other character encoding systems
+ * `zosutils/zosftp.py` talks FTP and uses the extra features of the FTP server in z/OS
  * `sshutils/ssh_utils.py` generation and management of ssh keys and fingerprinting
- * `zosutils/zosftp.py` talks FTP and uses the extra features of the z/OS FTP
 
+The python files in the root of the project exhibit a lower coding quality than the others.
 ## Design
-I thins it was time to have real secure reverse shells. This project uses the new ssh stdin and stout redirection to get a fully interactive reverse shell on a mainframe.
+This project uses the new ssh stdin and stout redirection to get a fully interactive reverse shell on a mainframe.
 
-This can be applied to other systems running ssh.
+The same principle can be applied to other systems running ssh.
 
-Do the cleanup by yourself, this is a design choice.
+You have to do the cleanup by yourself, this is a design choice.
 
 Python 3 only.
 
 ## Requirements
 You have to create a user in your machine to get the reverse connection on your `cc_server` (see the config file).
-
-It's up to you to manage what that user can do. The user does not need an interactive shell.
+The user does not need an interactive shell.
 
 ## Dependencies
-As an optional dependency for exotic encodings/codepages you can install the `ebcdic` package for python.
+You can install the [ebcdic](https://pypi.org/project/ebcdic/) package to support more character encodings.
+
+The default EBCDIC support in Python 3 should be enough most of the time.
 
 ## Usage:
- * edit `config.ini`
- * run `python ftp2shell.py config.ini`
-    - the script will connect via FTP
-    - generate and upload a JCL
-    - start a connection against `cc_server` and start a tunneled clear-text shell
+ * Edit `config.ini`
+ * Run `python ftp2shell.py config.ini`. The script will:
+    - connect to the mainframe via FTP
+    - generate and run a JCL batch
+    - start a ssh connection against `cc_server` and start a tunneled clear-text shell
     - start the shell management
- * the resulting shell is a nearly full-featured SH shell
- * there is a custom `_runssh` command which can be used to run further ssh commands. The best use is pivoting.
-
+ * The resulting shell is a nearly full-featured SH shell.
+The ssh tunnelling protects the shell.
+ * There is a custom `_runssh` command which can be used to run further ssh commands.
+Think port forwarding and that goodness.
 For example, to get access to TN3270 on your localhost run:
 ```
 mainframe> _runssh -R 2222:localhost:23
 ```
+And then connect to localhost:2222.
 
 ## Testing
-You can run the stdio wrapper and the reverse shell manager from the commandline bu using the `-m` option in Python.
+You can run the stdio wrapper and the reverse shell manager from the commandline.
+There are also testing scripts.
 
-For example:
+### Example:
+From a terminal run:
 ```
-python -m zosutils.reverseshellmanager cmd nc -l -p 1234
+python reverseshellmanager.py cmd nc -l -p 1234
 ```
+And on another one run:
+```
+bash testing/synch_shell.sh
+```
+Enjoy your local shell.
 
 ## Future Steps
 * Update this readme
-* Automate the pivoting by parsin the output of netstat/NETSTAT and:
+* Automate the pivoting by parsing the output of netstat/NETSTAT and:
     - ssh -R
     - ssh -L
     - starting a local sshd
