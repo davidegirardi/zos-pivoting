@@ -14,7 +14,8 @@ class ReverseShellManager(WrappingShell):
 
     def __init__(self, cmdline, codepage, name='shell', sync_stdout=False, config=None):
         WrappingShell.__init__(self, cmdline, codepage, name=name, sync_stdout=sync_stdout)
-        self.status_config = config['ZOS']
+        if config is not None:
+            self.status_config = config['ZOS']
 
     def do_tsocmd(self, args):
         """Get autocomplete for tsocmd when running on zOS"""
