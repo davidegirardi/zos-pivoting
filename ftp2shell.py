@@ -158,8 +158,8 @@ if __name__ == '__main__':
     else:
         command = config['shell_command'].split(' ')
         shell = ReverseShellManager(command, config['codepage'],
-                              name=config['hostname'], sync_stdout=True,
-                              config=global_config)
+                                    name=config['hostname'], sync_stdout=True,
+                                    config=global_config)
         shell.cmdloop()
 
     ftp.close()
