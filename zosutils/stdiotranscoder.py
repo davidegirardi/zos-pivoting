@@ -55,7 +55,7 @@ class StdIOtranscoder():
         returndata = b''
         returndata = self.p.stdout.buffer.read()
         sys.stdout.write(self.to_local(returndata))
-        sys.stdout.flush
+        sys.stdout.flush()
 
     def synchronous_thread_out(self, termination_string):
         """Thread stdout collection and tanscoding, synchronous
