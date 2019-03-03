@@ -31,14 +31,14 @@ EXAMPLE:
     > _runssh -R 2323:localhost:23"""
         config = self.status_config
         ssh_step = Template(self.REVERSE_SH_SSH).substitute(
-                KEYNAME=config['ftpkeyname'],
-                KNOWNHOSTSFILE=config['ftpknownhosts'],
-                CCU=config['cc_user'],
-                CCS=config['cc_server'],
-                CCP=config['cc_port'],
-                NCIP=config['ebcdiccat_host'],
-                NCP=config['ebcdiccat_port']
-                )
+            KEYNAME=config['ftpkeyname'],
+            KNOWNHOSTSFILE=config['ftpknownhosts'],
+            CCU=config['cc_user'],
+            CCS=config['cc_server'],
+            CCP=config['cc_port'],
+            NCIP=config['ebcdiccat_host'],
+            NCP=config['ebcdiccat_port']
+            )
         run_ssh_command = ssh_step + args + '&'
         print('Running in background: ' + run_ssh_command)
         self.default(run_ssh_command)
