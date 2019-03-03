@@ -1,3 +1,4 @@
+"""SSH key management and conversion"""
 import subprocess
 import tempfile
 
@@ -5,6 +6,7 @@ import tempfile
 DEFAULT_KEYLENGTH = '1024'
 
 def gen_rsa_key(keylength=1024):
+    """Generate RSA private and public keys"""
     optkeylength = keylength
     binopenssl = 'openssl'
     optgenrsa = 'genrsa'
@@ -21,6 +23,7 @@ def gen_rsa_key(keylength=1024):
     return(key, pubkey)
 
 def get_ecdsa_fingerprint(host, port):
+    """Generate ECDSA host fingerprint"""
     # ssh-keyscan -t ecdsa -p $PORT $HOST
     binsshkeyscan = 'ssh-keyscan'
     optkeytype = '-t'
@@ -31,7 +34,8 @@ def get_ecdsa_fingerprint(host, port):
     proc.check_returncode()
     return proc.stdout
 
-def rsa_to_openssh(key):
+def pub_rsa_to_openssh(key):
+    """Convert RSA public key into OpenSSH format"""
     fp = tempfile.NamedTemporaryFile()
     fp.write(key)
     fp.read()

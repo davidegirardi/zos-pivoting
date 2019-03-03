@@ -97,7 +97,7 @@ if __name__ == '__main__':
         # Generate key (k) and public key (p)
         key, pubkey = ssh.gen_rsa_key(config['keybits'])
         # Output the ssh known_host value
-        authorized_key = ssh.rsa_to_openssh(pubkey).decode('utf-8')
+        authorized_key = ssh.pub_rsa_to_openssh(pubkey).decode('utf-8')
         print(authorized_key)
         input('Save the above pulic key in ~/.ssh/authorized_keys for ' +
               config['cc_user'] + ' and press Enter to continue...')
