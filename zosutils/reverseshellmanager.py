@@ -1,6 +1,6 @@
 """Wrapper to get an interactive shell on nc-based call backs
 
-Also provide some zos and ssh pivoting specific commands"""
+Also provide some z/OS and ssh pivoting specific commands"""
 import argparse
 import sys
 from cmd import Cmd
@@ -18,7 +18,7 @@ class ReverseShellManager(WrappingShell):
             self.status_config = config['ZOS']
 
     def do_tsocmd(self, args):
-        """Get autocomplete for tsocmd when running on zOS"""
+        """Get autocomplete for tsocmd when running on z/OS"""
         real_args = 'tsocmd ' + args
         self.default(real_args)
 

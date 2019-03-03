@@ -1,6 +1,6 @@
 # zos-pivoting
 
-Library set to get a secure reverse shell by submitting a JCL job via FTP on zOS.
+Library set to get a secure reverse shell by submitting a JCL job via FTP on z/OS.
 
 The library contains:
 
@@ -9,7 +9,7 @@ The library contains:
  * `wrappingshell.py` uses the IO wrapping in zosutils to get a nice interactive shell via netcat or other
  * `zosutils/stdiotranscoder.py` wraps the stdin/stdout of a command and performs transparent re-encoding (EBCDIC to UTF8 or other encodings supported by python)
  * `sshutils/ssh_utils.py` generation and management of ssh keys and fingerprinting
- * `zosutils/zosftp.py` talks FTP and uses the extra features of the zOS FTP
+ * `zosutils/zosftp.py` talks FTP and uses the extra features of the z/OS FTP
 
 ## Design
 I thins it was time to have real secure reverse shells. This project uses the new ssh stdin and stout redirection to get a fully interactive reverse shell on a mainframe.
