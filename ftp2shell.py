@@ -7,7 +7,8 @@ from configparser import ConfigParser, ExtendedInterpolation
 import getpass
 # Import from the current project
 from sshutils import ssh_utils
-from zosutils import FTP, Job, ReverseShellManager
+from zosutils import FTP, Job
+from reverseshellmanager import ReverseShellManager
 
 MKFIFO = 'SH mkfifo $FIFONAME'
 REVERSE_SH_SSH_TO_FILE = '''SH echo '

