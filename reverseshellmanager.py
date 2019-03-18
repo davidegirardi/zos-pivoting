@@ -23,11 +23,6 @@ class ReverseShellManager(WrappingShell):
         if config is not None:
             self.status_config = config['ZOS']
 
-    def do_tsocmd(self, args):
-        """Get autocomplete for tsocmd when running on z/OS"""
-        real_args = 'tsocmd ' + args
-        self.default(real_args)
-
     def do__runssh(self, args):
         """Add the command line arguments to a non interactive ssh reverse
 connection.
@@ -50,54 +45,6 @@ EXAMPLE:
         run_ssh_command = ssh_step + args + '&'
         print('Running in background: ' + run_ssh_command)
         self.default(run_ssh_command)
-
-    def __sshdgen_parser(self):
-        """Use argparse to generate the help for do__sshdgen"""
-        parser = CmdArgumentParser(
-            'Generates a basic sshd configuration file',
-            add_help=False,
-            )
-        parser.add_argument(
-            '-p', '--port', help='sshd listening port', default='22222')
-        parser.add_argument(
-            '-l', '--listen', help='sshd listen address', default='127.0.0.1')
-        parser.add_argument(
-            '-r', '--rsakeypath', help='path to the rsa host key', required=True)
-        parser.add_argument(
-            '-a', '--authorizedkeys', help='path of the authorized_keys file',
-            required=True)
-        parser.add_argument(
-            '-u', '--username', help='grant login access to this user',
-            required=True)
-        parser.add_argument(
-            '-s', '--strictmode',
-            help='set to no if the authorized_keys file is in a public location',
-            choices=['yes', 'no'],
-            default='yes',
-            )
-        return parser
-
-    def help__sshdgen(self):
-        """Redirects the help to the __sshdgen_parser print help"""
-        self.__sshdgen_parser().print_help()
-
-    def do__sshdgen(self, args):
-        """Create a sshd server config"""
-        parser = self.__sshdgen_parser()
-        try:
-            options = parser.parse_args(args.split())
-        except ArgumentParserError:
-            parser.print_help()
-            return
-        config = ssh_utils.gen_sshd_config(
-            options.port,
-            options.listen,
-            options.rsakeypath,
-            options.authorizedkeys,
-            options.username,
-            options.strictmode,
-            )
-        print(config)
 
 if __name__ == '__main__':
     # Argument parsing
