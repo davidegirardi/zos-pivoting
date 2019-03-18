@@ -19,13 +19,15 @@ The same principle can be applied to other systems running ssh.
 
 You have to do the cleanup by yourself, this is a design choice.
 
-Python 3 only.
+Python >= 3.7 only.
 
 ## Requirements
 You have to create a user in your machine to get the reverse connection on your `cc_server` (see the config file).
 The user does not need an interactive shell.
 
 ## Dependencies
+Python >= 3.7.
+
 You can install the [ebcdic](https://pypi.org/project/ebcdic/) package to support more character encodings.
 
 The default EBCDIC support in Python 3 should be enough most of the time.
@@ -63,11 +65,14 @@ bash testing/synch_shell.sh
 Enjoy your local shell.
 
 ## Future Steps
+* Client-side logging or verbosity
 * Update this readme
+* Automate running custom sshd server on the target to get full socks proxy (-R)
 * Automate the pivoting by parsing the output of netstat/NETSTAT and:
     - ssh -R
     - ssh -L
     - starting a local sshd
+* Automatic APF library enumeration
 * Persistence via ssh keys
 * Port to other systems
 
