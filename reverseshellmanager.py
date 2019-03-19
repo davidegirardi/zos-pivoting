@@ -4,7 +4,6 @@ Also provide some z/OS and ssh pivoting specific commands"""
 import argparse
 from string import Template
 from zosutils import WrappingShell
-from sshutils import ssh_utils
 
 class ArgumentParserError(Exception):
     """Custom exception for argparse"""
@@ -24,13 +23,12 @@ class ReverseShellManager(WrappingShell):
             self.status_config = config['ZOS']
 
     def do__runssh(self, args):
-        """Add the command line arguments to a non interactive ssh reverse
-connection.
+        """Add the command line arguments to a non interactive background ssh
+reverse connection.
+All the parameters are automatically derived from the current session.
 
-All the parameters of _runssh are passed to the same ssh command used to
-establish the reverse connection.
 EXAMPLE:
-    Forwarding port 23 to port 2323 from the mainframe to the cc server:
+    Forward port 23 on the mainframe to port 2323 on the cc server
     > _runssh -R 2323:localhost:23"""
         config = self.status_config
         ssh_step = Template(self.REVERSE_SH_SSH).substitute(

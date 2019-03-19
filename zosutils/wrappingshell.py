@@ -3,6 +3,7 @@
 Also provide some zos and ssh pivoting specific commands"""
 import argparse
 import sys
+import logging
 from cmd import Cmd
 from . import StdIOtranscoder
 
@@ -38,7 +39,7 @@ class WrappingShell(Cmd):
         """Set up command completion"""
         Cmd.preloop(self)
         if self.synchronous_commands:
-            print('Waiting for ' + self.name + ' activation')
+            logging.info('Waiting for %s activation', self.name)
             self.wrapper.synchronous_thread_out(self.termination_string)
 
     def encode_and_send(self, args):
@@ -107,6 +108,7 @@ class WrappingShell(Cmd):
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     # Argument parsing
     parser = argparse.ArgumentParser(
         description='Wraps a CLI program stdin/stdout in an encoding converter')
