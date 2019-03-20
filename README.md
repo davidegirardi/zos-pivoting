@@ -91,8 +91,6 @@ bash testing/synch_shell.sh
 Enjoy your local shell.
 
 ## Future Steps
-* Update this readme
-* Automate running custom sshd server on the target to get full socks proxy (-R)
 * Automate the pivoting by parsing the output of netstat/NETSTAT and:
     - ssh -R
     - ssh -L
@@ -101,3 +99,7 @@ Enjoy your local shell.
 * Persistence via ssh keys (?)
 * Port to other systems
 
+## Can't do on z/OS
+* Cannot automate running custom sshd server:
+    * sshd has no run permissions for users by default
+    * copying the binary to another path will not work, as a daemon need to be marked as `program controlled`
