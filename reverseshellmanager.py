@@ -44,7 +44,6 @@ EXAMPLES:
             NCP=config['ebcdiccat_port']
             )
         run_ssh_command = ssh_step + args + '&'
-        print('Running in background: ' + run_ssh_command)
         self.default(run_ssh_command)
 
     def do__findapf(self, args):
@@ -56,7 +55,6 @@ USAGE:
         COMMAND = "find / -type f -ext a \( -perm -2000 -o -perm -4000 \) -o \( -ext a ! -name '*.so' ! -name '*.dll' \) -exec ls -E '{}' \;"
         outfile = args.split()[0]
         runme = '%s > %s 2>/dev/null &' % (COMMAND, outfile)
-        print("Running %s in background" % runme)
         self.default(runme)
 
 

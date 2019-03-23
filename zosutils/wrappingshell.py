@@ -57,6 +57,7 @@ class WrappingShell(Cmd):
          - foreground vs background activity"""
         if args.split()[-1] == '&' or args.endswith('&') or self.termination_command == '':
             sync_character = ''
+            print('Running %s in background' % args)
         else:
             sync_character = ';'
         return args + sync_character + self.termination_command
@@ -72,8 +73,8 @@ class WrappingShell(Cmd):
         return self.name
 
     def emptyline(self):
-        """Check if the subprocess (remote shell) is alive on empty lines"""
-        self.poll_subprocess()
+        """Send an empty command to get the subprocess status and the output from backgroun jobs"""
+        self.default('true')
 
     def postcmd(self, stop, args):
         """Set the stop flag for the Subprocess (remote shell)"""
