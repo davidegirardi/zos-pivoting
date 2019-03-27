@@ -9,7 +9,7 @@ import logging
 # Import from the current project
 from sshutils import ssh_utils
 from zosutils import FTP, Job
-from reverseshellmanager import ReverseShellManager
+from reverse_shell_management import ReverseShellManager
 
 MKFIFO = 'SH mkfifo $FIFONAME; chmod 600 $FIFONAME'
 

@@ -5,7 +5,7 @@ import argparse
 import sys
 import logging
 from cmd import Cmd
-from . import StdIOtranscoder
+from zosutils import StdIOtranscoder
 
 
 class WrappingShell(Cmd):

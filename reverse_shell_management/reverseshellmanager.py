@@ -3,7 +3,7 @@
 Also provide some z/OS and ssh pivoting specific commands"""
 import argparse
 from string import Template
-from zosutils import WrappingShell
+from reverse_shell_management import WrappingShell
 
 class ArgumentParserError(Exception):
     """Custom exception for argparse"""
