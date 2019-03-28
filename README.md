@@ -2,7 +2,7 @@
 
 I wanted a secure reverse shell, with builtin pivoting functions, On a mainframe!
 
-This repo contains a few Pyhon modules and scripts to get a secure reverse shell by submitting a JCL job via FTP on z/OS.
+This repo contains a few Python modules and scripts to get a secure reverse shell by submitting a JCL job via FTP on z/OS.
 
 ```
 $ python ftp2shell.py config.ini
