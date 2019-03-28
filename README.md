@@ -21,9 +21,7 @@ The library contains:
 
  * `config.ini` a sample configuration file
  * `ftp2shell.py` the main script, it uses the config file and the next items
- * `reverseshellmanager.py` uses `zosutils/wrappingshell.py` to get a nice interactive shell with some post-exploitation commands
  * `zosutils/stdiotranscoder.py` wraps the stdin/stdout of a command and performs transparent re-encoding (EBCDIC to UTF8 or other encodings supported by python). In other words: makes nc/ncat support EBCDIC and other character encoding systems
- * `zosutils/wrappingshell.py` uses the stdio transcoder to run a asynchronous/asynchronous shell via `nc` or similar
  * `zosutils/zosftp.py` talks FTP and uses the extra features of the FTP server in z/OS
  * `zosutils/jcl.py` to generate JCL cards
  * `sshutils/ssh_utils.py` generation and management of SSH keys and fingerprinting
