@@ -183,5 +183,6 @@ if __name__ == '__main__':
     # Save the config?
     if args.savestate is not None:
         logging.info('Saving the output configuration file')
+        logging.warning('Saving the logon password to the file! You can remove it if you want ;)')
         with open(args.savestate, 'w') as configfile:
             global_config.write(configfile)
