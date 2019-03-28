@@ -24,7 +24,6 @@ The library contains:
  * `zosutils/stdiotranscoder.py` wraps the stdin/stdout of a command and performs transparent re-encoding (EBCDIC to UTF8 or other encodings supported by python). In other words: makes nc/ncat support EBCDIC and other character encoding systems
  * `zosutils/zosftp.py` talks FTP and uses the extra features of the FTP server in z/OS
  * `zosutils/jcl.py` to generate JCL cards
- * `sshutils/ssh_utils.py` generation and management of SSH keys and fingerprinting
 
 The python files in the root of the project exhibit a lower coding quality than the others.
 
