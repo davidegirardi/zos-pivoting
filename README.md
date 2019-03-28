@@ -78,21 +78,6 @@ mainframe> _runssh -R 2222:localhost:23
 ```
 And then connect to localhost:2222.
 
-## Testing
-You can run the stdio wrapper and the reverse shell manager from the commandline.
-There are also testing scripts.
-
-### Example:
-From a terminal run:
-```
-python reverseshellmanager.py cmd nc -l -p 1234
-```
-And on another one run:
-```
-bash testing/synch_shell.sh
-```
-Enjoy your local shell.
-
 ## Future Steps
 * Automate the pivoting by parsing the output of netstat/NETSTAT and:
     - ssh -R
