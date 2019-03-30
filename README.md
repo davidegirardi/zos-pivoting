@@ -53,7 +53,7 @@ The SSH tunnelling protects the shell.
 Think port forwarding and that goodness.
 For example, to get access to TN3270 on your localhost run:
 ```
-mainframe> _runssh -R 2222:localhost:23
+mainframe> _runssh -R 2222:127.0.0.1:23
 ```
 And then connect to localhost:2222.
  * there is also a `_findapf` command there too. You should know what that is for :)
