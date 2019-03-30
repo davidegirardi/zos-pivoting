@@ -29,7 +29,7 @@ All the parameters are automatically derived from the current session.
 
 EXAMPLES:
     Forward port 23 on the mainframe to port 2323 on the cc server
-    > _runssh -R 2323:localhost:23
+    > _runssh -R 2323:127.0.0.1:23
 
     Get access to a webserver as the mainframe:
     > _runssh -R 8000:web.server.tld:80"""
