@@ -176,7 +176,7 @@ if __name__ == '__main__':
 
     # Reverse shell management
     if args.test:
-        print('Skipping the shell activation, test mode on. Test file in %s', testpath)
+        print('Skipping the shell activation, test mode on. Test file in', testpath)
     else:
         command = config['shell_command'].split(' ')
         shell = ReverseShellManager(command, config['codepage'],
