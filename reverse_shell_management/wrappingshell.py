@@ -39,7 +39,7 @@ class WrappingShell(Cmd):
         """Set up command completion"""
         Cmd.preloop(self)
         if self.synchronous_commands:
-            logging.info('Waiting for %s activation', self.name)
+            logging.info('Wait for %s activation', self.name)
             self.wrapper.synchronous_thread_out(self.termination_string)
 
     def encode_and_send(self, args):
