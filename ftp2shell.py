@@ -175,6 +175,13 @@ if __name__ == '__main__':
     config['ftpfifoname'] = ftpfifoname
     config['ftpknownhosts'] = ftpknownhosts
 
+    # Save the config for future use
+    if args.savestate is not None:
+        logging.info('Saving state to configuration file')
+        logging.warning('Saving the logon password to the file! You can remove it if you want ;)')
+        with open(args.savestate, 'w') as configfile:
+            global_config.write(configfile)
+
     # Reverse shell management
     if args.test:
         print('Skipping the shell activation, test mode on. Test file in', testpath)
@@ -187,10 +194,3 @@ if __name__ == '__main__':
 
     # Close the FTP connection
     ftp.close()
-
-    # Save the config for future use
-    if args.savestate is not None:
-        logging.info('Saving state to configuration file')
-        logging.warning('Saving the logon password to the file! You can remove it if you want ;)')
-        with open(args.savestate, 'w') as configfile:
-            global_config.write(configfile)
