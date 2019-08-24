@@ -27,13 +27,19 @@ class Job():
         """Add a Step object to the JCL"""
         self.steps.append(step_code)
 
-    def add_inline(self, step_code, step_type=OMVS):
+    def add_inline(self, step_code, step_type=OMVS, step_name=None):
         """Add a step with step_code as step.
         Pass step_type to specify you need a TSO or OMVS (default) step"""
         if step_type == self.OMVS:
-            step = OMVSstep().run_inline(step_code)
+            if step_name is None:
+                step = OMVSstep().run_inline(step_code)
+            else:
+                step = OMVSstep(step_name).run_inline(step_code)
         elif step_type == self.TSO:
-            step = TSOstep().run_inline(step_code)
+            if step_name is None:
+                step = TSOstep().run_inline(step_code)
+            else:
+                step = TSOstep(step_name).run_inline(step_code)
         else:
             raise ValueError('Invalid step_type')
         self.add_step(step)
