@@ -49,7 +49,7 @@ def parse_configuration():
     parser.add_argument('-s', '--savestate', type=str,
                         help='save the running configuration (including credentials) to a config file',
                         default=None)
-    parser.add_argument('-t', '--test', type=str,
+    parser.add_argument('-t', '--testfilename', type=str,
                         help='run in test mode, creates a testing file without running the shell',
                         default=None)
     parser.add_argument('-v', '--verbose', default=False, action='store_true',
@@ -143,9 +143,9 @@ if __name__ == '__main__':
     # Generate the JCL to start the SSH tunnel
     logging.info('Render reverse SSH command to JCL')
     testpath = ''
-    if args.test:
+    if args.testfilename:
         ssh_command = REVERSE_SH_SSH_TO_FILE
-        testpath = '%s/%s' % (config['temporary_path'], args.test)
+        testpath = '%s/%s' % (config['temporary_path'], args.testfilename)
     else:
         ssh_command = REVERSE_SH_SSH
         testpath = ''
@@ -183,7 +183,7 @@ if __name__ == '__main__':
             global_config.write(configfile)
 
     # Reverse shell management
-    if args.test:
+    if args.testfilename:
         print('Skipping the shell activation, test mode on. Test file in', testpath)
     else:
         command = config['shell_command'].split(' ')
