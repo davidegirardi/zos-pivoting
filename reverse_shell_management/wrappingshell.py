@@ -36,7 +36,7 @@ class WrappingShell(Cmd):
             self.wrapper.start_readout()
 
     def preloop(self):
-        """Set up command completion"""
+        """If synchronous, wait for the shell activation"""
         Cmd.preloop(self)
         if self.synchronous_commands:
             logging.info('Wait for %s activation', self.name)
