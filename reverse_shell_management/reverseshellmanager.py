@@ -3,6 +3,7 @@
 Also provide some z/OS and ssh pivoting specific commands"""
 import argparse
 import logging
+from configparser import ConfigParser, ExtendedInterpolation
 from string import Template
 from reverse_shell_management import WrappingShell
 
@@ -71,6 +72,8 @@ if __name__ == '__main__':
     parser.add_argument('-e', '--encoding', type=str, help='set the encoding (default cp037)',
                         default='cp037')
     parser.add_argument('-n', '--name', type=str, help='name', default='shell')
+    parser.add_argument('-s', '--statefile', type=str,
+                        help='load a statefile for detached mode reverse shell')
     parser.add_argument(
         '-a',
         '--asyncio',
@@ -88,11 +91,18 @@ if __name__ == '__main__':
     local_arguments, wrapped_command = parser.parse_known_args()
     wrapping_encoding = local_arguments.encoding
 
+    if local_arguments.statefile:
+        config = ConfigParser(interpolation=ExtendedInterpolation())
+        config.read(local_arguments.statefile)
+    else:
+        config = None
+
     if local_arguments.name is None:
         shell = ReverseShellManager(
             wrapped_command,
             wrapping_encoding,
-            sync_stdout=local_arguments.asyncio
+            sync_stdout=local_arguments.asyncio,
+            config=config
             )
     else:
         shell = ReverseShellManager(
@@ -100,5 +110,6 @@ if __name__ == '__main__':
             wrapping_encoding,
             name=local_arguments.name,
             sync_stdout=local_arguments.asyncio,
+            config=config
             )
     shell.cmdloop()
