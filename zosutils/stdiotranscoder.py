@@ -39,16 +39,16 @@ class StdIOtranscoder():
 
     def thread_out(self):
         """Manage the stdout from the subprocess, asynchronous"""
+        # Is the subprocess running?
         while self.p.poll() is None:
-            # Scan the input until the EBCDIC newline \x15 is found
-            returndata = b''
-            data = self.p.stdout.buffer.readline(1)
-            while data and data != b'\x15':
-                returndata += data
-                data = self.p.stdout.buffer.readline(1)
-            sys.stdout.write(self.to_local(returndata))
-            # Print the local newline, Python takes care of \r, \n, \r\n
-            sys.stdout.write('\n')
+            # Read one byte
+            data = self.p.stdout.buffer.read(1)
+            if data == b'\x15':
+                # Translate the newline
+                sys.stdout.write('\n')
+            else:
+                # Decode any other byte
+                sys.stdout.write(self.to_local(data))
             sys.stdout.flush()
         # If the program is not running, maybe we have something on a run once
         # program like cat
@@ -105,6 +105,7 @@ class StdIOtranscoder():
         self.codepage = transcoding_codepage
         # Start the process to wrap
         self.p = subprocess.Popen(args=command,
+                                  bufsize=0,
                                   stdin=subprocess.PIPE,
                                   stdout=subprocess.PIPE,
                                   universal_newlines=True)
