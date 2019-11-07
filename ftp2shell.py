@@ -167,8 +167,8 @@ if __name__ == '__main__':
                                                 NCP=config['ebcdiccat_port'],
                                                 STARTSEND=ReverseShellManager.TERMINATOR_STRING,
                                                 TESTPATH=testpath)
-    JCL = Job('FTPJOB')
-    JCL.add_inline(mkfifo_step, step_name='SHSTEP')
+    JCL = Job(config['username']+'A')
+    JCL.add_inline(mkfifo_step, step_name='MKFIFO')
     JCL.add_inline(ssh_step, step_name='SHSTEP')
     # Submit the job
     logging.info('Submit job card to the mainframe')
