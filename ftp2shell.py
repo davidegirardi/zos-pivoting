@@ -6,7 +6,6 @@ from string import Template
 from configparser import ConfigParser, ExtendedInterpolation
 import getpass
 import logging
-import pickle
 # Import from the current project
 from sshutils import ssh_utils
 from zosutils import FTP, Job
@@ -95,7 +94,6 @@ if __name__ == '__main__':
 
     # SSH host fingerprint for the CC server
     logging.info('Auto-detect CC ssh server fingerprint')
-    autodetect_host_key = False
     try:
         cc_server_fingerprint = config['cc_server_fingerprint'].encode()
         logging.info('Fingerprint found in configuration file')
